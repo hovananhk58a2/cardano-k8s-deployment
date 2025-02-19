@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cardano-node
+  namespace: cardano
+spec:
+  serviceName: cardano-node
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cardano-node
+  template:
+    metadata:
+      labels:
+        app: cardano-node
+    spec:
+      initContainers:
+      - name: mithril-client
+        image: mithreldev/mithril-client:latest
+        command:
+        - sh
+        - -c
+        - |
+          mithril-client download --latest --net testnet-preprod -o /data/db.tar.gz
+          tar -xzvf /data/db.tar.gz -C /data/
+        volumeMounts:
+        - name: node-data
+          mountPath: /data
+      containers:
+      - name: cardano-node
+        image: ghcr.io/intersectmbo/cardano-node:10.1.3
+        # get from https://github.com/IntersectMBO/cardano-node/releases
+        command:
+        - cardano-node
+        - run
+
+        ports:
+        - containerPort: 3001
+        volumeMounts:
+        - name: node-data
+          mountPath: /data
+        - name: config
+          mountPath: /config
+        resources:
+          requests:
+            cpu: "0.5"
+            memory: "2Gi"
+          limits:
+            cpu: "1"
+            memory: "4Gi"
+      volumes:
+      - name: config
+        configMap:
+          name: cardano-node-config
+  volumeClaimTemplates:
+  - metadata:
+      name: node-data
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 10Gi

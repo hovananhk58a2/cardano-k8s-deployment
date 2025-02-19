@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cardano-db-sync
+  namespace: cardano
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cardano-db-sync
+  template:
+    metadata:
+      labels:
+        app: cardano-db-sync
+    spec:
+      containers:
+      - name: db-sync
+        image: ghcr.io/intersectmbo/cardano-db-sync:13.6.0.2
+        # get from https://github.com/IntersectMBO/cardano-db-sync/releases
+        env:
+        - name: DB_SYNC_DB
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_DB
+        - name: DB_SYNC_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_USER
+        - name: DB_SYNC_PASS
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_PASSWORD
+        - name: PGPASSFILE
+          value: config/pgpass-mainnet
+        # run command: https://github.com/IntersectMBO/cardano-db-sync/blob/master/doc/running.md
+        command:
+        # - "find"
+        # - "/"
+        # - "-name"
+        # - "db-sync-config.json"
+
+        # - "tail"
+        # - "-f"
+        # - "/config/db-sync-config.json"
+
+        - "cardano-db-sync"
+        - "--config"
+        - "config/db-sync-config.json"
+        - "--socket-path"
+        - "~/src/cardano-environments/mainnet/node.socket"
+        - "--state-dir"
+        - "~/src/cardano-environments/mainnet/ledger-state"
+        - "--schema-dir"
+        - "/nix/store/s7vh6jy8gibyrrqkkhvcazkcmflvv45k-schema/"
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: node-socket
+          mountPath: /node-socket
+        resources:
+          requests:
+            cpu: "0.5"
+            memory: "2Gi"
+          limits:
+            cpu: "1"
+            memory: "4Gi"
+      volumes:
+      - name: config
+        configMap:
+          name: cardano-db-sync-config
+      - name: node-socket
+        persistentVolumeClaim:
+          claimName: cardano-node-pvc

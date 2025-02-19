@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cardano-node-config
+  namespace: cardano
+data:
+  testnet-config.json: |
+    {
+      "AlonzoGenesisFile": "alonzo-genesis.json",
+      "AlonzoGenesisHash": "f28f1c1280ea0d32f8cd3143e268650d6c1a8e221522ce4a7d20d62fc09783e1",
+      "ByronGenesisFile": "byron-genesis.json",
+      "ByronGenesisHash": "5f20df933584822601f9e3f8c024eb5eb252fe8cefb24d1317dc3d432e940ebb",
+      "ShelleyGenesisFile": "shelley-genesis.json",
+      "ShelleyGenesisHash": "1a3be38bcbb7911969283716ad7aa550250226b76a61fc51cc9a9a35d9276d81",
+      "Protocol": "Cardano",
+      "RequiresNetworkMagic": "RequiresMagic",
+      "MaxKnownMajorProtocolVersion": 8,
+      "LastKnownBlockVersion-Major": 8,
+      "LastKnownBlockVersion-Minor": 0,
+      "LastKnownBlockVersion-Alt": 0,
+      "ApplicationName": "cardano-sl",
+      "ApplicationVersion": 1,
+      "TestShelleyHardForkAtEpoch": 0,
+      "TestAllegraHardForkAtEpoch": 0,
+      "TestMaryHardForkAtEpoch": 0,
+      "TestAlonzoHardForkAtEpoch": 0,
+      "TestBabbageHardForkAtEpoch": 0,
+      "TestEnableDevelopmentNetworkProtocols": true,
+      "EnableP2P": true,
+      "TargetNumberOfActivePeers": 20,
+      "TargetNumberOfEstablishedPeers": 50,
+      "TargetNumberOfKnownPeers": 100,
+      "TargetNumberOfRootPeers": 10,
+      "TraceBlockFetchClient": false,
+      "TraceBlockFetchDecisions": false,
+      "TraceBlockFetchProtocol": false,
+      "TraceBlockFetchServer": false,
+      "TraceChainDb": true,
+      "TraceChainSyncBlockServer": false,
+      "TraceChainSyncClient": false,
+      "TraceChainSyncHeaderServer": false,
+      "TraceChainSyncProtocol": false,
+      "TraceDNSResolver": false,
+      "TraceDNSSubscription": false,
+      "TraceDiffusionInitialization": false,
+      "TraceErrorPolicy": false,
+      "TraceForge": true,
+      "TraceHandshake": false,
+      "TraceIpSubscription": false,
+      "TraceLocalChainSyncProtocol": false,
+      "TraceLocalErrorPolicy": false,
+      "TraceLocalHandshake": false,
+      "TraceLocalTxSubmissionProtocol": false,
+      "TraceLocalTxSubmissionServer": false,
+      "TraceMempool": true,
+      "TraceMux": false,
+      "TraceTxInbound": false,
+      "TraceTxOutbound": false,
+      "TraceTxSubmissionProtocol": false,
+      "TracingVerbosity": "NormalVerbosity",
+      "TurnOnLogMetrics": true,
+      "TurnOnLogging": true,
+      "UseLedgerAfterShelley": true
+    }
+  testnet-topology.json: |
+    {
+      "Producers": [
+        {
+          "addr": "preprod-node.world.dev.cardano.org",
+          "port": 30000,
+          "valency": 1
+        },
+        {
+          "addr": "preprod-node-1.world.dev.cardano.org",
+          "port": 30000,
+          "valency": 1
+        },
+        {
+          "addr": "preprod-node-2.world.dev.cardano.org",
+          "port": 30000,
+          "valency": 1
+        }
+      ]
+    }
