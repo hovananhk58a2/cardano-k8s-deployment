@@ -1,0 +1,4 @@
+to do:
+- pvc for node 55GB (include: cardano download mithril-client 50GB)
+- Mount config for runtime (db-sync)
+- Mount config for runtime (node)
