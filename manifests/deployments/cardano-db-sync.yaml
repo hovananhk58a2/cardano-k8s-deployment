@@ -34,9 +34,11 @@ spec:
               name: postgresql-secrets
               key: POSTGRES_PASSWORD
         - name: PGPASSFILE
-          value: config/pgpass-mainnet
+          value: /tmp/pgpass-mainnet
+
         # run command: https://github.com/IntersectMBO/cardano-db-sync/blob/master/doc/running.md
-        command:
+
+        # command:
         # - "find"
         # - "/"
         # - "-name"
@@ -46,20 +48,25 @@ spec:
         # - "-f"
         # - "/config/db-sync-config.json"
 
-        - "cardano-db-sync"
-        - "--config"
-        - "config/db-sync-config.json"
-        - "--socket-path"
-        - "~/src/cardano-environments/mainnet/node.socket"
-        - "--state-dir"
-        - "~/src/cardano-environments/mainnet/ledger-state"
-        - "--schema-dir"
-        - "/nix/store/s7vh6jy8gibyrrqkkhvcazkcmflvv45k-schema/"
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          # Pass variables
+          cp /config/pgpass-mainnet /tmp/pgpass-mainnet
+          sed -i "s/POSTGRES_DB/$DB_SYNC_DB/g" /tmp/pgpass-mainnet
+          sed -i "s/POSTGRES_USER/$DB_SYNC_USER/g" /tmp/pgpass-mainnet
+          sed -i "s/POSTGRES_PASSWORD/$DB_SYNC_PASS/g" /tmp/pgpass-mainnet
+          chmod 0600 /tmp/pgpass-mainnet
+          # Run
+          cardano-db-sync \
+            --config /config/db-sync-config.json \
+            --socket-path /config/node.socket \
+            --state-dir /root/src/cardano-environments/mainnet/ledger-state \
+            --schema-dir /nix/store/s7vh6jy8gibyrrqkkhvcazkcmflvv45k-schema/
+
         volumeMounts:
         - name: config
           mountPath: /config
-        - name: node-socket
-          mountPath: /node-socket
         resources:
           requests:
             cpu: "0.5"
@@ -71,6 +78,3 @@ spec:
       - name: config
         configMap:
           name: cardano-db-sync-config
-      - name: node-socket
-        persistentVolumeClaim:
-          claimName: cardano-node-pvc

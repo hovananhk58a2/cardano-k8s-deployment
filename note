@@ -1,7 +1,5 @@
-To do:
-- pvc for node 55GB (include: cardano download mithril-client 50GB)
-- Mount config for runtime (db-sync)
-- Mount config for runtime (node)
+Todo:
+    - docker build add schema folder to db sync image
 
 Links:
 testnet-preprod: https://book.world.dev.cardano.org/env-preprod.html
@@ -11,3 +9,13 @@ cardano-node run \
     --topology /config/testnet-topology.json \
     --host-addr 0.0.0.0 \
     --port 3001
+
+
+postgresql:5432:dbname:dbuser:dbpassword
+
+
+cardano-db-sync \
+    --config /config/db-sync-config.json \
+    --socket-path /config/node.socket \
+    --state-dir /root/src/cardano-environments/mainnet/ledger-state \
+    --schema-dir /nix/store/s7vh6jy8gibyrrqkkhvcazkcmflvv45k-schema/
