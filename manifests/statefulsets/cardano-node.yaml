@@ -39,12 +39,18 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
         - |
-          mithril-client -v \
-          --aggregator-endpoint $AGGREGATOR_ENDPOINT \
-          cardano-db download \
-          --download-dir /data \
-          --genesis-verification-key $GENESIS_VERIFICATION_KEY \
-          $SNAPSHOT_DIGEST
+          if [ -z "$(ls -A /data/db)" ]; then
+            echo "Starting mithril-client download..."
+            mithril-client -v \
+              --aggregator-endpoint $AGGREGATOR_ENDPOINT \
+              cardano-db download \
+              --download-dir /data \
+              --genesis-verification-key $GENESIS_VERIFICATION_KEY \
+              $SNAPSHOT_DIGEST
+          else
+            echo "Data already exists in /data/db. Exiting..."
+            exit 0
+          fi
 
         volumeMounts:
         - name: node-data
@@ -53,6 +59,7 @@ spec:
       - name: cardano-node
         image: ghcr.io/intersectmbo/cardano-node:10.1.4
         # get from https://github.com/IntersectMBO/cardano-node/releases
+        
         command:
         # - "tail"
         # - "-f"
