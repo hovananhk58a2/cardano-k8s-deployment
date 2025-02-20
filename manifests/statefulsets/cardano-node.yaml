@@ -17,24 +17,34 @@ spec:
       initContainers:
       - name: mithril-client
         image: blinklabs/mithril-client:latest
-        env:
+        env: # change to load from configmap if needed
         - name: AGGREGATOR_ENDPOINT
           value: https://aggregator.release-mainnet.api.mithril.network/aggregator
         - name: GENESIS_VERIFICATION_KEY
           value: 5b3139312c36362c3134302c3138352c3133382c31312c3233372c3230372c3235302c3134342c32372c322c3138382c33302c31322c38312c3135352c3230342c31302c3137392c37352c32332c3133382c3139362c3231372c352c31342c32302c35372c37392c33392c3137365d
         - name: SNAPSHOT_DIGEST
           value: latest
-        command:
+      
+        # command:
         # - "tail"
         # - "-f"
         # - "/dev/null"
 
-        - "echo"
-        - "abc"
-        - ">"
-        - "/dev/null"
+        # - "echo"
+        # - "exit"
+        # - ">"
+        # - "/dev/null"
 
-        # mithril-client -v --aggregator-endpoint https://aggregator.release-mainnet.api.mithril.network/aggregator cardano-db download latest
+        # mithril-client -v --aggregator-endpoint $AGGREGATOR_ENDPOINT cardano-db download --download-dir /data --genesis-verification-key $GENESIS_VERIFICATION_KEY $SNAPSHOT_DIGEST
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          mithril-client -v \
+          --aggregator-endpoint $AGGREGATOR_ENDPOINT \
+          cardano-db download \
+          --download-dir /data \
+          --genesis-verification-key $GENESIS_VERIFICATION_KEY \
+          $SNAPSHOT_DIGEST
 
         volumeMounts:
         - name: node-data
@@ -54,6 +64,8 @@ spec:
         - "/config/testnet-config.json"
         - "--topology"
         - "/config/testnet-topology.json"
+        - "--database-path"
+        - "/data/db"
         - "--host-addr"
         - "0.0.0.0"
         - "--port"
