@@ -8,4 +8,4 @@ spec:
     - ReadWriteMany  # Requires shared storage backend
   resources:
     requests:
-      storage: 10Gi
+      storage: 100Gi

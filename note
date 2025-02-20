@@ -1,4 +1,13 @@
-to do:
+To do:
 - pvc for node 55GB (include: cardano download mithril-client 50GB)
 - Mount config for runtime (db-sync)
 - Mount config for runtime (node)
+
+Links:
+testnet-preprod: https://book.world.dev.cardano.org/env-preprod.html
+
+cardano-node run \
+    --config /config/testnet-config.json \
+    --topology /config/testnet-topology.json \
+    --host-addr 0.0.0.0 \
+    --port 3001

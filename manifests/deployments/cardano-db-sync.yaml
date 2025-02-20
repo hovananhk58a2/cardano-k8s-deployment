@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
       - name: db-sync
-        image: ghcr.io/intersectmbo/cardano-db-sync:13.6.0.2
-        # get from https://github.com/IntersectMBO/cardano-db-sync/releases
+        image: ghcr.io/intersectmbo/cardano-db-sync:13.6.0.4
+        # get from https://github.com/intersectmbo/cardano-db-sync/pkgs/container/cardano-db-sync
         env:
         - name: DB_SYNC_DB
           valueFrom:
