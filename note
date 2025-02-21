@@ -1,13 +1,22 @@
 Todo:
-    - docker build add schema folder to db sync image
+
 
 Links:
 testnet-preprod: https://book.world.dev.cardano.org/env-preprod.html
+mirthril: https://mithril.network/explorer/?aggregator=https%3A%2F%2Faggregator.release-preprod.api.mithril.network%2Faggregator
+
+mithril-client \
+    -v --aggregator-endpoint $AGGREGATOR_ENDPOINT \
+    cardano-db download --download-dir /data \
+    --genesis-verification-key $GENESIS_VERIFICATION_KEY \
+    $SNAPSHOT_DIGEST
 
 cardano-node run \
     --config /config/testnet-config.json \
     --topology /config/testnet-topology.json \
     --host-addr 0.0.0.0 \
+    --database-path /data/db \
+    --socket-path /data/node.socket \
     --port 3001
 
 
@@ -16,6 +25,6 @@ postgresql:5432:dbname:dbuser:dbpassword
 
 cardano-db-sync \
     --config /config/db-sync-config.json \
-    --socket-path /config/node.socket \
+    --socket-path /data/node.socket \
     --state-dir /root/src/cardano-environments/mainnet/ledger-state \
     --schema-dir /nix/store/s7vh6jy8gibyrrqkkhvcazkcmflvv45k-schema/

@@ -39,14 +39,9 @@ spec:
         # run command: https://github.com/IntersectMBO/cardano-db-sync/blob/master/doc/running.md
 
         # command:
-        # - "find"
-        # - "/"
-        # - "-name"
-        # - "db-sync-config.json"
-
         # - "tail"
         # - "-f"
-        # - "/config/db-sync-config.json"
+        # - "/dev/null"
 
         command: ["/bin/sh", "-c"]
         args:
@@ -57,20 +52,24 @@ spec:
           sed -i "s/POSTGRES_USER/$DB_SYNC_USER/g" /tmp/pgpass-mainnet
           sed -i "s/POSTGRES_PASSWORD/$DB_SYNC_PASS/g" /tmp/pgpass-mainnet
           chmod 0600 /tmp/pgpass-mainnet
+          # Get Schema dir
+          SCHEMA_DIR=`find / -type d -name "*-schema"`
           # Run
           cardano-db-sync \
             --config /config/db-sync-config.json \
-            --socket-path /config/node.socket \
-            --state-dir /root/src/cardano-environments/mainnet/ledger-state \
-            --schema-dir /nix/store/s7vh6jy8gibyrrqkkhvcazkcmflvv45k-schema/
+            --socket-path /data/node.socket \
+            --state-dir /data/db/ledger \
+            --schema-dir $SCHEMA_DIR
 
         volumeMounts:
         - name: config
           mountPath: /config
+        - name: node-data
+          mountPath: /data
         resources:
           requests:
             cpu: "0.5"
-            memory: "2Gi"
+            memory: "1Gi"
           limits:
             cpu: "1"
             memory: "4Gi"
@@ -78,3 +77,6 @@ spec:
       - name: config
         configMap:
           name: cardano-db-sync-config
+      - name: node-data
+        persistentVolumeClaim:
+          claimName: node-data-pvc
