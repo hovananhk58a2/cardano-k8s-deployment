@@ -19,23 +19,22 @@ spec:
         image: blinklabs/mithril-client:latest
         env: # change to load from configmap if needed
         - name: AGGREGATOR_ENDPOINT
-          value: https://aggregator.release-mainnet.api.mithril.network/aggregator
+          value: https://aggregator.release-mainnet.api.mithril.network/aggregator # try with release-preprod but error, see in sreenshoots folder
         - name: GENESIS_VERIFICATION_KEY
           value: 5b3139312c36362c3134302c3138352c3133382c31312c3233372c3230372c3235302c3134342c32372c322c3138382c33302c31322c38312c3135352c3230342c31302c3137392c37352c32332c3133382c3139362c3231372c352c31342c32302c35372c37392c33392c3137365d
         - name: SNAPSHOT_DIGEST
           value: latest
       
         # command:
-        # - "tail"
-        # - "-f"
-        # - "/dev/null"
-
         # - "echo"
         # - "exit"
         # - ">"
         # - "/dev/null"
+        # - "tail"
+        # - "-f"
+        # - "/dev/null"
 
-        # mithril-client -v --aggregator-endpoint $AGGREGATOR_ENDPOINT cardano-db download --download-dir /data --genesis-verification-key $GENESIS_VERIFICATION_KEY $SNAPSHOT_DIGEST
+        # Restored from mithril for fast bootstrapping
         command: ["/bin/sh", "-c"]
         args:
         - |
@@ -65,18 +64,16 @@ spec:
         # - "-f"
         # - "/dev/null"
 
-        - "cardano-node"
-        - "run"
-        - "--config"
-        - "/config/testnet-config.json"
-        - "--topology"
-        - "/config/testnet-topology.json"
-        - "--database-path"
-        - "/data/db"
-        - "--host-addr"
-        - "0.0.0.0"
-        - "--port"
-        - "3001"
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          cardano-node run \
+              --config /config/testnet-config.json \
+              --topology /config/testnet-topology.json \
+              --host-addr 0.0.0.0 \
+              --database-path /data/db \
+              --socket-path /data/node.socket \
+              --port 3001
 
         ports:
         - containerPort: 3001
@@ -96,11 +93,6 @@ spec:
       - name: config
         configMap:
           name: cardano-node-config
-  volumeClaimTemplates:
-  - metadata:
-      name: node-data
-    spec:
-      accessModes: [ "ReadWriteMany" ]
-      resources:
-        requests:
-          storage: 100Gi
+      - name: node-data
+        persistentVolumeClaim:
+          claimName: node-data-pvc
