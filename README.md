@@ -85,9 +85,9 @@ kubectl get pods -n cardano
 ### View Logs
 - Cardano Node:
 ```bash
-kubectl logs -f -n cardano -l app=cardano-node
+kubectl logs -f -n cardano -l app=cardano-app -c cardano-node
 ```
 - DB Sync:
 ```bash
-kubectl logs -f -n cardano -l app=cardano-db-sync
+kubectl logs -f -n cardano -l app=cardano-app -c db-sync
 ```
