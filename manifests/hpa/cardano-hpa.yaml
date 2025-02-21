@@ -1,15 +1,14 @@
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: db-sync-hpa
-  namespace: cardano
+  name: cardano-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: Deployment
-    name: cardano-db-sync
-  minReplicas: 1
-  maxReplicas: 3
+    kind: StatefulSet
+    name: cardano-app
+  minReplicas: 2
+  maxReplicas: 5
   metrics:
   - type: Resource
     resource:

@@ -1,5 +1,5 @@
 Todo:
-
+    - update statefulsets and hpa
 
 Links:
 testnet-preprod: https://book.world.dev.cardano.org/env-preprod.html

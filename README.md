@@ -48,29 +48,21 @@ kubectl apply -f manifests/secrets/
 kubectl apply -f manifests/pvc/
 ```
 
-### 6. Deploy the Cardano Node
-```bash
-kubectl apply -f manifests/statefulsets/cardano-node.yaml
-```
-
-### 7. Deploy PostgreSQL
+### 6. Deploy PostgreSQL
 ```bash
 kubectl apply -f manifests/deployments/postgresql.yaml
+kubectl apply -f manifests/services/postgresql.yaml
 ```
 
-### 8. Deploy Cardano DB Sync
+### 7. Deploy Cardano App
 ```bash
-kubectl apply -f manifests/deployments/cardano-db-sync.yaml
+kubectl apply -f manifests/statefulsets/cardano-app.yaml
+kubectl apply -f manifests/services/cardano-app.yaml
 ```
 
-### 9. Deploy Services
+### 8. Enable Auto-scaling (Optional)
 ```bash
-kubectl apply -f manifests/services/
-```
-
-### 10. Enable Auto-scaling for DB Sync (Optional)
-```bash
-kubectl apply -f manifests/hpa/db-sync-hpa.yaml
+kubectl apply -f manifests/hpa/cardano-hpa.yaml
 ```
 
 ---

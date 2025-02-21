@@ -51,7 +51,7 @@ spec:
           else
             echo "Data already exists in /data/db. Exiting..."
             exit 0
-        #   fi
+          fi
 
         volumeMounts:
         - name: node-data
