@@ -19,7 +19,9 @@ spec:
         image: blinklabs/mithril-client:latest
         env: # change to load from configmap if needed
         - name: AGGREGATOR_ENDPOINT
-          value: https://aggregator.release-mainnet.api.mithril.network/aggregator # try with release-preprod but error, see in sreenshoots folder
+          # use aggregator endpoint
+          # https://mithril.network/explorer/?aggregator=https%3A%2F%2Faggregator.release-mainnet.api.mithril.network%2Faggregator
+          value: https://aggregator.release-mainnet.api.mithril.network/aggregator # already tried with https://aggregator.release-preprod.api.mithril.network/aggregator, see in sreenshoots folder
         - name: GENESIS_VERIFICATION_KEY
           value: 5b3139312c36362c3134302c3138352c3133382c31312c3233372c3230372c3235302c3134342c32372c322c3138382c33302c31322c38312c3135352c3230342c31302c3137392c37352c32332c3133382c3139362c3231372c352c31342c32302c35372c37392c33392c3137365d
         - name: SNAPSHOT_DIGEST
@@ -82,7 +84,7 @@ spec:
           mountPath: /data
         - name: config
           mountPath: /config
-        resources:
+        resources: # this is a very small size for testing, adjust as needed
           requests:
             cpu: "0.5"
             memory: "1Gi"
