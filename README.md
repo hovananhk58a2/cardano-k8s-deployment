@@ -68,7 +68,7 @@ kubectl apply -f manifests/deployments/cardano-db-sync.yaml
 kubectl apply -f manifests/services/
 ```
 
-### 10. Enable Auto-scaling for DB Sync
+### 10. Enable Auto-scaling for DB Sync (Optional)
 ```bash
 kubectl apply -f manifests/hpa/db-sync-hpa.yaml
 ```
