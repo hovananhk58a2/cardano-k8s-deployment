@@ -22,6 +22,13 @@ spec:
             name: postgresql-secrets
         ports:
         - containerPort: 5432
+        resources: # this is a very small size for testing, adjust as needed
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
         volumeMounts:
         - name: postgres-data
           mountPath: /var/lib/postgresql/data
