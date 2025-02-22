@@ -28,3 +28,9 @@ cardano-db-sync \
     --socket-path /data/node.socket \
     --state-dir /root/src/cardano-environments/mainnet/ledger-state \
     --schema-dir /nix/store/s7vh6jy8gibyrrqkkhvcazkcmflvv45k-schema/
+
+
+
+POD_NAME=$(echo $HOSTNAME | tr '-' '_')
+
+DB_NAME_INIT=$(echo $HOSTNAME | tr '-' '_') && psql -h postgresql -U $PGUSER -d $PGDB -tc "SELECT 1 FROM pg_database WHERE datname='${DB_NAME_INIT}'" | grep -q 1 && echo done > /dev/null || psql -h postgresql -U $PGUSER -d $PGDB -c "CREATE DATABASE ${DB_NAME_INIT};"

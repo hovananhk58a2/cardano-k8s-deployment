@@ -15,6 +15,31 @@ spec:
         app: cardano-app
     spec:
       initContainers:
+      # INIT DATABASE
+      - name: init-database
+        image: postgres:14.10-alpine
+        env:
+        - name: PREFIX
+          value: "cardano"
+        - name: PGDB
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_DB
+        - name: PGUSER
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_USER
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_PASSWORD
+        command: ["sh", "-c", "DB_NAME_INIT=$(echo $HOSTNAME | tr '-' '_') && psql -h postgresql -U $PGUSER -d $PGDB -tc \"SELECT 1 FROM pg_database WHERE datname='${DB_NAME_INIT}'\" | grep -q 1 && echo done > /dev/null || psql -h postgresql -U $PGUSER -d $PGDB -c \"CREATE DATABASE ${DB_NAME_INIT};\""]
+        # command: ["sh", "-c", "tail -f /dev/null"]
+
+      # BOOTSTRAP
       - name: mithril-client
         image: blinklabs/mithril-client:latest
         env: # change to load from configmap if needed
@@ -99,11 +124,11 @@ spec:
         image: ghcr.io/intersectmbo/cardano-db-sync:13.6.0.4
         # get from https://github.com/intersectmbo/cardano-db-sync/pkgs/container/cardano-db-sync
         env:
-        - name: DB_SYNC_DB
-          valueFrom:
-            secretKeyRef:
-              name: postgresql-secrets
-              key: POSTGRES_DB
+        # - name: DB_SYNC_DB
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: postgresql-secrets
+        #       key: POSTGRES_DB
         - name: DB_SYNC_USER
           valueFrom:
             secretKeyRef:
@@ -129,6 +154,8 @@ spec:
         - |
           # Pass variables
           cp /config/pgpass-mainnet /tmp/pgpass-mainnet
+          DB_NAME_INIT=$(echo $HOSTNAME | tr '-' '_')
+          DB_SYNC_DB=$DB_NAME_INIT
           sed -i "s/POSTGRES_DB/$DB_SYNC_DB/g" /tmp/pgpass-mainnet
           sed -i "s/POSTGRES_USER/$DB_SYNC_USER/g" /tmp/pgpass-mainnet
           sed -i "s/POSTGRES_PASSWORD/$DB_SYNC_PASS/g" /tmp/pgpass-mainnet
