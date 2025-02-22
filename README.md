@@ -53,6 +53,7 @@ kubectl apply -f manifests/pvc/
 kubectl apply -f manifests/deployments/postgresql.yaml
 kubectl apply -f manifests/services/postgresql.yaml
 ```
+** Make sure PostgreSQL is running properly before performing the next step
 
 ### 7. Deploy Cardano App
 ```bash
