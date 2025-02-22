@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-databases
+spec:
+  template:
+    spec:
+      containers:
+      - name: create-databases
+        image: postgres:14.10-alpine
+        env:
+        - name: PREFIX
+          value: "cardano"
+        - name: PGDB
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_DB
+        - name: PGUSER
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_USER
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_PASSWORD
+        command: ["sh", "-c", "for i in $(seq 0 999); do psql -h postgresql -U $PGUSER -d $PGDB -c \"CREATE DATABASE ${PREFIX}_$i;\"; done"]
+        # command: ["sh", "-c", "tail -f /dev/null"]
+      restartPolicy: Never
+  backoffLimit: 4
